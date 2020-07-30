@@ -18,7 +18,7 @@
       :label="item.label"
     >
       <template slot-scope='scope'>
-        <template v-html='renderHtml()'></template>  
+        <template v-html='renderTableCell(scope, item)'></template>  
       </template>  
     </el-table-column>
     <!-- <el-table-column show-overflow-tooltip label="操作" align="center" fixed="right" width="70">
@@ -49,10 +49,8 @@
 
 <script lang="ts">
 import {Component, Vue, Prop, Watch} from 'vue-property-decorator'
-import Pagination from '@/components/Pagination/index.vue'
-@Component({
-  components: {Pagination}
-})
+
+@Component
 export default class extends Vue {
   @Prop({required: true}) tableData 
   @Prop({required: true}) tableConf
@@ -64,11 +62,6 @@ export default class extends Vue {
       return renderHtml(row)
     }
     return row[prop]
-  }
-
-  renderHtml(){
-    console.log(123)
-    return 123
   }
 }
 </script>

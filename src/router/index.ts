@@ -49,6 +49,10 @@ const routes: Array<RouteConfig> = [
         component: () => import(/* webpackChunkName: "tag" */ '@/views/Tag/tag3.vue')
       },
     ]
+  },{
+    path: '/tabletest',
+    name: 'tabletest',
+    component: () => import('@/views/TableTest/index.vue')
   }
 ]
 
