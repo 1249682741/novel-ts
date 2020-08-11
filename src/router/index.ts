@@ -26,7 +26,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/canvas',
     name: 'Canvas',
-    component: () => import( /* webpackChunkName: "canvas" */ '@/views/CanvasImg/index.vue'),
+    component: () => import( /* webpackChunkName: "canvas" */ '@/views/CanvasImg/demo.vue'),
   },
   {
     path: '/tag',
@@ -49,10 +49,16 @@ const routes: Array<RouteConfig> = [
         component: () => import(/* webpackChunkName: "tag" */ '@/views/Tag/tag3.vue')
       },
     ]
-  },{
+  },
+  {
     path: '/tabletest',
     name: 'tabletest',
     component: () => import('@/views/TableTest/index.vue')
+  },
+  {
+    path: '/collegemap',
+    name: 'collegemap',
+    component: () => import(/* webpackChunkName: "collegemap" */ '@/views/CollegeMap/index.vue')
   }
 ]
 

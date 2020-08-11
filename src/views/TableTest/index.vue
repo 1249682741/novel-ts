@@ -25,10 +25,10 @@ export default class TableTest extends Vue{
 
   private limitQuery = {current: 1, size: 10}
   private pageTotal = 100
-  private _data = []
+  private data = []
 
   created(){
-    this._data = Array.from({length: 100}).map((item, index) => {
+    this.data = Array.from({length: 100}).map((item, index) => {
       return {
         index
       }
@@ -46,7 +46,7 @@ export default class TableTest extends Vue{
   }
 
   _getData(data){
-    return this._data.filter((item, index) => index >= data.current * data.size && index < (data.current + 1) * data.size)
+    return this.data.filter((item, index) => index < data.current * data.size && index >= (data.current - 1) * data.size)
   }
 }
 </script>

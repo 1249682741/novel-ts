@@ -17,9 +17,9 @@
       :sortable="item.sortable"
       :label="item.label"
     >
-      <template slot-scope='scope'>
+      <!-- <template slot-scope='scope'>
         <template v-html='renderTableCell(scope, item)'></template>  
-      </template>  
+      </template>   -->
     </el-table-column>
     <!-- <el-table-column show-overflow-tooltip label="操作" align="center" fixed="right" width="70">
       <div slot-scope="scope">

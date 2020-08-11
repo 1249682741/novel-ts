@@ -8,60 +8,87 @@
 
 <script lang="ts">
 import {Component, Prop, Vue, Watch} from 'vue-property-decorator' 
+import {toZipDownload} from '@/utils/download'
 import JYImg from './jy.jpg'
 import JYCoverImg from './jyfm.jpg'
-import {toZipDownload} from '@/utils/download'
+import YXImg from './yx.jpg'
+import YXCoverImg from './yxfm.jpg'
+
+export interface ImgInfo {
+  school: string;
+  type: string
+}
+
+export interface canvasData {
+  name: string,
+  title: string,
+  beginTime: string,
+  endTime: string,
+  sealTime: string
+}
 
 @Component
-export default class extends Vue{
-  @Prop({required: true}) private nameArr !: Array<string>
-  @Prop({required: true}) private title !: string
-  @Prop({required: true}) private beginTime !: string
-  @Prop({required: true}) private endTime !: string
-  @Prop({required: true}) private sealTime !: string
-  @Prop({default: 'jy'}) imgType !: string
+export default class CanvasImg extends Vue{
+  @Prop({required: true}) private canvasData !: Array<canvasData>
+  @Prop({required: true}) imgInfo !: ImgInfo
   @Prop({default: 'cover'}) private coverImgName: string
   @Prop({default: 'certificate'}) private certificateImgName: string
 
-  
-  private coverImg: string
-  private certificateImg: string
   private ctx: CanvasRenderingContext2D | null
-  private imgDataPromise = []
   private canvasStyle = {width: 300, height: 300}
+  private coverImg :string
+  private certificateImg :string
 
-  @Watch('imgType', {immediate:true})
-  initImgPath(val){
-    const imgInfo = {
-      'jy': {
-        coverImg: JYCoverImg,
-        certificateImg: JYImg
+  @Watch('imgInfo', {immediate: true, deep: true})
+  initImg(val){
+    const obj = {
+      'dbs': {
+        'jy': {cover: JYCoverImg, certificate: JYImg},
+        'yx': {cover: YXCoverImg, certificate: YXImg}
       }
     }
-    if (Object.prototype.hasOwnProperty.call(imgInfo, val)){
-      this.coverImg = imgInfo[val].coverImg
-      this.certificateImg = imgInfo[val].certificateImg
-    } else {
-      console.warn("the imgType prop of [CanvasImg] component is in 'jy' ")
-    }
+    this.coverImg = obj[val.school][val.type].cover
+    this.certificateImg = obj[val.school][val.type].certificate
   }
+
   mounted(){
+    this.ctx = (this.$refs['myCanvas'] as HTMLCanvasElement).getContext('2d')
     this.$emit('myCanvas', this)
   }
   public downloadImg() {
     // 每次下载前重置 imgDataPromise
-    this.imgDataPromise = []
+    let imgDataPromise = []
     // 由于点击下载按钮是DOM可能未完成渲染。 因而使用$nextTick等DOM渲染完成再执行任务
     this.$nextTick(() => {
-      console.log(2)
-      this.ctx = (this.$refs['myCanvas'] as HTMLCanvasElement).getContext('2d')
-      this.imgDataPromise.push(this.drawCover(this.coverImg))
-      this.nameArr.forEach(name => {
-        this.imgDataPromise.push(this.drawCertificate(this.certificateImg, name, this.title, this.beginTime, this.endTime, this.sealTime))
+      imgDataPromise.push(this.drawCover(this.coverImg))
+      this.canvasData.forEach(item => {
+        imgDataPromise.push(this[`${this.imgInfo.school}_${this.imgInfo.type}_drawCertificate`](this.certificateImg, item.name, item.title, item.beginTime, item.endTime, item.sealTime))
       })
-      toZipDownload(this.imgDataPromise, `${this.coverImgName}.png`, `${this.certificateImgName}.png`)
+      toZipDownload(imgDataPromise, `${this.coverImgName}.png`, `${this.certificateImgName}.png`)
     })
   }
+  // 获取cover图片
+  public getCoverImg(){
+    return this.coverImg
+  }
+
+  // 获取canvas图片
+  public getCanvasImg(){
+    return new Promise((resolve,reject) => {
+      try{
+        this[`${this.imgInfo.school}_${this.imgInfo.type}_drawCertificate`](this.certificateImg, this.canvasData[0].name, this.canvasData[0].title, this.canvasData[0].beginTime, this.canvasData[0].endTime, this.canvasData[0].sealTime, true)
+          .then(res => {
+            resolve(res)
+          })
+          .catch(err => {
+            reject(err)
+          })
+      }catch(err){
+        reject(err)
+      }
+    })
+  }
+
   private drawCover (imgSrc: string) {
     return new Promise((resolve) => {
       const img = new Image()
@@ -81,7 +108,7 @@ export default class extends Vue{
     })
   }
   /**
-   * 画结业证书信息
+   * 画大别山结业证书信息
    * @param imgSrc 结业证书背景图片
    * @param name 被授予证书人姓名
    * @param title 培训项目 maxLen 19
@@ -89,30 +116,32 @@ export default class extends Vue{
    * @param endTime 项目结束时间 xx-xx
    * @param sealTime 证书盖章时间 xxxx-xx-xx
    */
-  private drawCertificate(imgSrc: string, name: string, title: string, beginTime: string, endTime: string, sealTime: string) {
+  private dbs_jy_drawCertificate(imgSrc: string, name: string, title: string, beginTime: string, endTime: string, sealTime: string, toImage: boolean = false) {
     return new Promise((resolve) => {
       const img = new Image()
       img.src= imgSrc
       img.onload = () => {
         this._initCanvasSize(img)
         this.$nextTick(() => {
+
+          const maxLenObj= {name: 88, title:  420}
           this.ctx.drawImage(img, 0, 0)
           this.ctx.font = 'normal normal bold 22px Arial'
           this.ctx.textAlign = 'end'
 
           const y1 = 278
-          this._fixFontSize(name, 'name')
+          this._fixFontSize(name, maxLenObj.name)
           this.ctx.fillText(name, 135, 278)
 
           this.ctx.font = 'normal normal bold 22px Arial'
           this.ctx.fillText(beginTime.substr(0, 4), 274, y1)
           this.ctx.fillText(beginTime.substr(5, 2), 328, y1)
           this.ctx.fillText(beginTime.substr(8, 2), 375, y1)
-          this.ctx.fillText(endTime.substr(0, 2), 460, y1)
-          this.ctx.fillText(endTime.substr(3, 2), 508, y1)
+          this.ctx.fillText(endTime.substr(5, 2), 460, y1)
+          this.ctx.fillText(endTime.substr(8, 2), 508, y1)
 
           const y2 = 320
-           this._fixFontSize(title, 'title')
+           this._fixFontSize(title, maxLenObj.title)
           this.ctx.fillText(title, 475, y2)
           
           const y3 = 478
@@ -121,30 +150,83 @@ export default class extends Vue{
           this.ctx.fillText(sealTime.substr(5, 2), 580,  y3)
           this.ctx.fillText(sealTime.substr(8, 2), 625,  y3)
 
-          return (this.$refs['myCanvas'] as HTMLCanvasElement).toBlob((blob) => {
-            resolve({
-              name,
-              imgData: blob
-            })
-          }, 'image/jpg')
+          if (toImage) {
+            return resolve((this.$refs['myCanvas'] as HTMLCanvasElement).toDataURL('image/png'))
+          } else {
+            return (this.$refs['myCanvas'] as HTMLCanvasElement).toBlob((blob) => {
+              resolve({
+                name,
+                imgData: blob
+              })
+            }, 'image/jpg')
+          }
+
+          
         })
       }
     })
   }
+
+  private dbs_yx_drawCertificate(imgSrc: string, name: string, title: string, beginTime: string, endTime: string, sealTime: string, toImage: boolean = false) {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.src= imgSrc
+      img.onload = () => {
+        this._initCanvasSize(img)
+        this.$nextTick(() => {
+
+          const maxLenObj= {name: 100, title:  268}
+          this.ctx.drawImage(img, 0, 0)
+          this.ctx.font = 'normal normal bold 22px Arial'
+          this.ctx.textAlign = 'end'
+
+          const y1 = 274
+          this._fixFontSize(name, maxLenObj.name)
+          this.ctx.fillText(name, 139, 273)
+
+          this.ctx.font = 'normal normal bold 22px Arial'
+          this.ctx.fillText(beginTime.substr(0, 4), 274, y1)
+          this.ctx.fillText(beginTime.substr(5, 2), 332, y1)
+          this.ctx.fillText(beginTime.substr(8, 2), 382, y1)
+          this.ctx.fillText(endTime.substr(5, 2), 462, y1)
+          this.ctx.fillText(endTime.substr(8, 2), 512, y1)
+
+          const y2 = 316
+           this._fixFontSize(title, maxLenObj.title)
+          this.ctx.fillText(title, 362, y2)
+          
+          const y3 = 496
+          this.ctx.font = 'normal normal bold 22px Arial'
+          this.ctx.fillText(sealTime.substr(0, 4), 583, y3)
+          this.ctx.fillText(sealTime.substr(5, 2), 631,  y3)
+          this.ctx.fillText(sealTime.substr(8, 2), 673,  y3)
+
+          if (toImage) {
+            return resolve((this.$refs['myCanvas'] as HTMLCanvasElement).toDataURL('image/png'))
+          } else {
+            return (this.$refs['myCanvas'] as HTMLCanvasElement).toBlob((blob) => {
+              resolve({
+                name,
+                imgData: blob
+              })
+            }, 'image/jpg')
+          }
+        })
+      }
+    })
+  }
+
   /**
    * 检查txt长度时候超出最大长度， 是的话就fontSize递归-1
    */
-  private _fixFontSize(txt: string, type: string){
-    const maxLenObj= {name: 88, title:  420}
-    if (Object.prototype.hasOwnProperty.call(maxLenObj, type)){
-      const font = this.ctx.font.split(' ')
-      if (this.ctx.measureText(txt).width >= maxLenObj[type]){
-        const fontSize = parseInt(font[1]) - 1
-        this.ctx.font = `normal normal ${font[0]} ${fontSize}px ${font[2]}`
-        this._fixFontSize(txt, type)
-      } else {
-        return 
-      }
+  private _fixFontSize(txt: string, len: number){
+    const font = this.ctx.font.split(' ')
+    if (this.ctx.measureText(txt).width >= len){
+      const fontSize = parseInt(font[1]) - 1
+      this.ctx.font = `normal normal ${font[0]} ${fontSize}px ${font[2]}`
+      this._fixFontSize(txt, len)
+    } else {
+      return 
     }
   }
   /**
