@@ -26,8 +26,8 @@ import CanvasImg from './index.vue'
 export default class Tag1 extends Vue{
   private canvasData = [
     {
-      name : '张三张三',
-      title : '河南工商系统2020培河南工河南工',
+      name : '张三',
+      title : '河南工商系统2020培训',
       beginTime : '2019-01-15',
       endTime : '2020-05-15',
       sealTime : '2020-05-15'
@@ -41,7 +41,7 @@ export default class Tag1 extends Vue{
   ]
   private imgInfo = {
     school: 'dbs',
-    type: 'yx'
+    type: 'jy'
   }
 
   private canvas = null

@@ -127,11 +127,13 @@ export default class CanvasImg extends Vue{
           const maxLenObj= {name: 88, title:  420}
           this.ctx.drawImage(img, 0, 0)
           this.ctx.font = 'normal normal bold 22px Arial'
-          this.ctx.textAlign = 'end'
+          this.ctx.textAlign = 'right'
 
           const y1 = 278
+
+          // this._drawTitle(name, maxLenObj.name, 135, y1)
           this._fixFontSize(name, maxLenObj.name)
-          this.ctx.fillText(name, 135, 278)
+          this.ctx.fillText(name, 135, y1)
 
           this.ctx.font = 'normal normal bold 22px Arial'
           this.ctx.fillText(beginTime.substr(0, 4), 274, y1)
@@ -141,9 +143,10 @@ export default class CanvasImg extends Vue{
           this.ctx.fillText(endTime.substr(8, 2), 508, y1)
 
           const y2 = 320
-           this._fixFontSize(title, maxLenObj.title)
-          this.ctx.fillText(title, 475, y2)
-          
+          // this._fixFontSize(title, maxLenObj.title)
+          // this.ctx.fillText(title, 475, y2)
+          this._drawTitle(title, maxLenObj.title, 475, y2)
+
           const y3 = 478
           this.ctx.font = 'normal normal bold 22px Arial'
           this.ctx.fillText(sealTime.substr(0, 4), 534, y3)
@@ -178,7 +181,7 @@ export default class CanvasImg extends Vue{
           const maxLenObj= {name: 100, title:  268}
           this.ctx.drawImage(img, 0, 0)
           this.ctx.font = 'normal normal bold 22px Arial'
-          this.ctx.textAlign = 'end'
+          this.ctx.textAlign = 'right'
 
           const y1 = 274
           this._fixFontSize(name, maxLenObj.name)
@@ -221,7 +224,7 @@ export default class CanvasImg extends Vue{
    */
   private _fixFontSize(txt: string, len: number){
     const font = this.ctx.font.split(' ')
-    if (this.ctx.measureText(txt).width >= len){
+    if (this.ctx.measureText(txt).width > len){
       const fontSize = parseInt(font[1]) - 1
       this.ctx.font = `normal normal ${font[0]} ${fontSize}px ${font[2]}`
       this._fixFontSize(txt, len)
@@ -229,6 +232,53 @@ export default class CanvasImg extends Vue{
       return 
     }
   }
+
+  private _drawTitle(txt: string, len: number, x: number, y:number){
+    let txtWidth = this.ctx.measureText(txt).width
+    if (txtWidth >= len){
+      this._fixFontSize(txt, len)
+      this.ctx.fillText(name, x, y)
+    }else{
+      let letterSpacing = this._fixLettrSpace(txt, len, 0, txtWidth)
+      letterSpacing = letterSpacing > 0 ? letterSpacing : 0.1
+      let arrText = txt.split('');
+      let align = this.ctx.textAlign || 'left';
+      let actualWidth = txtWidth + (letterSpacing - 0.1) * (txt.length - 1)
+      // 根据水平对齐方式确定第一个字符的坐标
+      if (align == 'center') {
+          x = x - actualWidth / 2;
+      } else if (align == 'right') {
+          x = x - actualWidth;
+      }
+      console.log(align, x, actualWidth)
+      
+      // 临时修改为文本左对齐
+      this.ctx.textAlign = 'left';
+      // 开始逐字绘制
+      arrText.forEach(letter => {
+          var letterWidth = this.ctx.measureText(letter).width;
+          this.ctx.fillText(letter, x, y);
+          // 确定下一个字符的横坐标
+          x = x + letterWidth + letterSpacing;
+      });
+      // 对齐方式还原
+      this.ctx.textAlign = align;
+    }
+  }
+
+
+
+  private _fixLettrSpace(txt: string, len: number,letterSpacing: number = 0, originWidth: number){
+    // 应用letterSpacing占据宽度
+    var actualWidth = originWidth + letterSpacing * (txt.length - 1)
+    if (actualWidth < len){
+      return this._fixLettrSpace(txt, len, letterSpacing + 0.1, originWidth)
+    }else{
+      return letterSpacing
+    }
+  }
+  
+
   /**
    * 根据图片大小 动态改变canvas画布大小
    * @param img HTMLImageElement 
