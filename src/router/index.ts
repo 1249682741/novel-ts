@@ -29,6 +29,11 @@ const routes: Array<RouteConfig> = [
     component: () => import( /* webpackChunkName: "canvas" */ '@/views/CanvasImg/demo.vue'),
   },
   {
+    path: '/html2ImgOrPdf',
+    name: 'html2ImgOrPdf',
+    component: () => import( /* webpackChunkName: "html2ImgOrPdf" */ '@/views/Html2ImgOrPdf/index.vue'),
+  },
+  {
     path: '/tag',
     component: Layout,
     redirect: '/tag/tag1',

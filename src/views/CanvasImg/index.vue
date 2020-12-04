@@ -131,7 +131,7 @@ export default class CanvasImg extends Vue{
 
           const y1 = 278
 
-          // this._drawTitle(name, maxLenObj.name, 135, y1)
+          // this._drawTxt(name, maxLenObj.name, 135, y1)
           this._fixFontSize(name, maxLenObj.name)
           this.ctx.fillText(name, 135, y1)
 
@@ -145,7 +145,7 @@ export default class CanvasImg extends Vue{
           const y2 = 320
           // this._fixFontSize(title, maxLenObj.title)
           // this.ctx.fillText(title, 475, y2)
-          this._drawTitle(title, maxLenObj.title, 475, y2)
+          this._drawTxt(title, maxLenObj.title, 475, y2)
 
           const y3 = 478
           this.ctx.font = 'normal normal bold 22px Arial'
@@ -163,8 +163,6 @@ export default class CanvasImg extends Vue{
               })
             }, 'image/jpg')
           }
-
-          
         })
       }
     })
@@ -184,8 +182,9 @@ export default class CanvasImg extends Vue{
           this.ctx.textAlign = 'right'
 
           const y1 = 274
+          // this._drawTxt(title, maxLenObj.name, 139, y1)
           this._fixFontSize(name, maxLenObj.name)
-          this.ctx.fillText(name, 139, 273)
+          this.ctx.fillText(name, 139, y1)
 
           this.ctx.font = 'normal normal bold 22px Arial'
           this.ctx.fillText(beginTime.substr(0, 4), 274, y1)
@@ -195,8 +194,9 @@ export default class CanvasImg extends Vue{
           this.ctx.fillText(endTime.substr(8, 2), 512, y1)
 
           const y2 = 316
-           this._fixFontSize(title, maxLenObj.title)
-          this.ctx.fillText(title, 362, y2)
+          this._drawTxt(title, maxLenObj.title, 362, y2)
+          // this._fixFontSize(title, maxLenObj.title)
+          // this.ctx.fillText(title, 362, y2)
           
           const y3 = 496
           this.ctx.font = 'normal normal bold 22px Arial'
@@ -233,7 +233,7 @@ export default class CanvasImg extends Vue{
     }
   }
 
-  private _drawTitle(txt: string, len: number, x: number, y:number){
+  private _drawTxt(txt: string, len: number, x: number, y:number){
     let txtWidth = this.ctx.measureText(txt).width
     if (txtWidth >= len){
       this._fixFontSize(txt, len)
@@ -241,28 +241,25 @@ export default class CanvasImg extends Vue{
     }else{
       let letterSpacing = this._fixLettrSpace(txt, len, 0, txtWidth)
       letterSpacing = letterSpacing > 0 ? letterSpacing : 0.1
-      let arrText = txt.split('');
+      let arrText = txt.split('')
       let align = this.ctx.textAlign || 'left';
       let actualWidth = txtWidth + (letterSpacing - 0.1) * (txt.length - 1)
       // 根据水平对齐方式确定第一个字符的坐标
       if (align == 'center') {
-          x = x - actualWidth / 2;
+          x = x - actualWidth / 2
       } else if (align == 'right') {
-          x = x - actualWidth;
+          x = x - actualWidth
       }
-      console.log(align, x, actualWidth)
-      
       // 临时修改为文本左对齐
-      this.ctx.textAlign = 'left';
+      this.ctx.textAlign = 'left'
       // 开始逐字绘制
       arrText.forEach(letter => {
-          var letterWidth = this.ctx.measureText(letter).width;
-          this.ctx.fillText(letter, x, y);
+          var letterWidth = this.ctx.measureText(letter).width
+          this.ctx.fillText(letter, x, y)
           // 确定下一个字符的横坐标
-          x = x + letterWidth + letterSpacing;
-      });
-      // 对齐方式还原
-      this.ctx.textAlign = align;
+          x = x + letterWidth + letterSpacing
+      })
+      this.ctx.textAlign = align
     }
   }
 
