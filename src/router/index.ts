@@ -64,6 +64,11 @@ const routes: Array<RouteConfig> = [
     path: '/collegemap',
     name: 'collegemap',
     component: () => import(/* webpackChunkName: "collegemap" */ '@/views/CollegeMap/index.vue')
+  },
+  {
+    path: '/fragmentUpload',
+    name: 'fragmentUpload',
+    component: () => import(/* webpackChunkName: "fragmentUpload" */ '@/views/fragmentUpload/index.vue')
   }
 ]
 

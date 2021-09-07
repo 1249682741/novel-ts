@@ -9,18 +9,3 @@ export interface RootState {
 }
 
 export default new Vuex.Store<RootState>({})
-
-// export default new Vuex.Store({
-//   state: {
-//     bookList: []
-//   },
-//   mutations: {
-//     setBookList(state, bookList){
-//       state.bookList = bookList
-//     }
-//   },
-//   actions: {
-//   },
-//   modules: {
-//   }
-// })
