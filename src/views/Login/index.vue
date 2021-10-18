@@ -1,86 +1,69 @@
-<template>
-  <el-container>
-    <el-main class="wrap"> 
-      <el-form 
-        :model="form" 
-        :rules='rules' 
-        status-icon 
-        ref="loginForm" 
-        size="small" 
-        label-width="80px">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" clearable ></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input show-password v-model="form.password" clearable ></el-input>
-        </el-form-item>
-      </el-form>
-      <el-button class="btn" type='primary' @click="submit" width='120px'>登录</el-button>
-    </el-main>
-  </el-container>
-</template>
 
-<script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
-import {isValidUsername, isValidPassword} from '@/utils/validate'
-import { ElForm } from 'element-ui/types/form'
-import * as UserModel from '@/api/User'
-import {RequestResult} from '@/utils/request'
+<script lang="ts" setup>
+import {reactive, ref, toRefs} from 'vue'
+import {ERR_CODE} from '/@/enums'
+import {ElMessage} from 'element-plus'
+import {useStore} from 'vuex'
+import {useRouter} from 'vue-router'
 
-@Component
-export default class Login extends Vue{
-  private form = {
-    username: '',
-    password: ''
+let form = reactive({
+  username: '',
+  password: ''
+})
+
+const store = useStore()
+const router = useRouter()
+
+const submit = async () => {
+  const result = await store.dispatch('user/login', form)
+  if (result.code == ERR_CODE.OK) {
+    ElMessage.success({showClose: true, message: '登录成功'})
+    router.push({name: 'hello'})
+  } else {
+    ElMessage.error({showClose: true, message: result.message})
   }
-  private rules = {
-    username: [{validator: this.validateUsername, trigger: 'blur'}],
-    password: [{validator: this.validatePassword, trigger: 'blur'}]
-  }
-
-  private validateUsername(rule: any, value: string, callback: Function){
-    if (!isValidUsername(value)){
-      callback(new Error('Please enter the correct user name'))
-    } else {
-      callback()
-    }
-  }
-
-  private validatePassword(rule: any, value: string, callback: Function){
-    if (!isValidPassword(value)){
-      callback(new Error('Please enter the correct password'))
-    } else {
-      callback()
-    }
-  }
-
-  private submit (){
-    (this.$refs.loginForm as ElForm).validate((valid: boolean) => {
-      console.log(valid)
-      if (valid){
-        UserModel.login({
-          username: this.form.username,
-          password: this.form.password
-        }).then((result: RequestResult) => {
-          if (result.code == 200){
-            this.$message('ok')
-          }
-        })
-      } else {
-        return false
-      }
-    })
-  }
-
-} 
+}
 </script>
 
-<style lang="scss" scoped>
-  .wrap{
-    width: 100vw;
-    height: 100vh;
+<template>
+  <div class='content'>
+    <el-form :model='form' label-width='80px' class="form">
+      <el-form-item label='用户名'>
+        <el-input v-model="form.username"></el-input>
+      </el-form-item>
+      <el-form-item label='密  码'>
+        <el-input v-model="form.password" show-password></el-input>
+      </el-form-item>
+      <div class="btn-wrap">
+        <el-button class="btn" type='primary' @click="submit">登录</el-button>
+      </div>
+    </el-form>
+  </div>
+</template>
+
+<style scoped lang='scss'>
+.content{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background: #a0cfff;
+}
+.form {
+  padding: 20px;
+  width: 400px;
+  height: 220px;
+  background: #fff;
+  .btn-wrap{
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+    .btn{
+      width: 100%;
+    }
   }
+}
 </style>

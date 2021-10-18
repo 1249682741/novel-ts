@@ -1,13 +1,19 @@
-import axios from 'axios'
-import {Message} from 'element-ui'
+import axios, { AxiosResponse } from 'axios'
+import { ElMessage } from 'element-plus'
+import { ERR_CODE } from '/@/enums'
+import {RequestResult} from '/@/types/request'
+import store from '/@/store'
 
 const service = axios.create({
-  baseURL: 'http://localhost:3000/',
+  baseURL: import.meta.env.VITE_APP_BASE_URL,
   timeout: 50000
 })
 
 service.interceptors.request.use(
   (config) => {
+    if (store.state.user.token) {
+      config.headers['Authorization'] = store.state.user.token
+    }
     return config
   }, 
   (error) => {
@@ -17,9 +23,11 @@ service.interceptors.request.use(
 )
 
 service.interceptors.response.use(
-  (response) => {
-    const res = response.data
-
+  (response) : AxiosResponse<RequestResult> => {
+    const res = response.data 
+    if (res.code == ERR_CODE.NOLOGIN){
+      store.dispatch('user/logout')
+    }
     if (response.config.responseType == "blob") {
       return res;
     }
@@ -28,18 +36,12 @@ service.interceptors.response.use(
   },
   (error) => {
     console.log('response err', error)
-    Message({
+    ElMessage({
       message: error.msg || '连接错误，请稍后再试！',
       type: 'error',
       duration: 5 *  1000
     })
   }
 )
-
-export interface RequestResult {
-  code?: number;
-  data: any;
-  message?: string;
-}
 
 export default service

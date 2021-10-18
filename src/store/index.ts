@@ -1,11 +1,14 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import { ITagsViewState } from './module/tags-view'
+import {createStore} from 'vuex'
+import { default as user} from './user'
+import { default as appSetting} from './appSetting'
+import { default as tagsView} from './tagsView'
 
-Vue.use(Vuex)
+const store  = createStore({
+  modules: {
+    appSetting,
+    tagsView,
+    user,
+  }
+})
 
-export interface RootState {
-  tagsView: ITagsViewState;
-}
-
-export default new Vuex.Store<RootState>({})
+export default store

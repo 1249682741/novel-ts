@@ -1,44 +1,46 @@
-<template>
-   <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page.sync="currentPage"
-      :page-size.sync="pageSize"
-      :page-sizes="[10, 15, 20, 30, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-    />
-</template>
+<script lang='ts'>
+import {defineComponent, reactive, toRefs, ref} from 'vue'
 
-<script lang="ts">
-import {Component, Vue, Prop} from 'vue-property-decorator'
+export default defineComponent({
+  props: {
+    total: {
+      type: Number,
+      required: true,
+    },
+    page: {
+      type: Number,
+      default: 1,
+    },
+    size: {
+      type: Number,
+      default: 10,
+    }
+  },
+  emits: ['pagination'],
+  setup(props, context) {
+    function handleSizeChange(val: number) {
+      context.emit('pagination', {page: props.page, size: val})
+    }
 
-@Component
-export default class Pagination extends Vue {
-  @Prop({required: true}) total!: number
-  @Prop({default: 1}) page !: number
-  @Prop({default: 10}) limit !: number
+    function handleCurrentChange(val: number) {
+      context.emit("pagination", {page: val, size: props.size });
+    }
 
-  get currentPage () {
-    return this.page
+    return {
+      handleSizeChange,
+      handleCurrentChange,
+    }
   }
-  set currentPage (val) {
-    this.$emit("update:page", val);
-  }
-
-  get pageSize() {
-    return this.limit;
-  }
-  set pageSize(val) {
-    this.$emit("update:limit", val);
-  }
-
-  handleSizeChange(val){
-    this.$emit('pagination', {page: this.currentPage, limit: val})
-  }
-
-  handleCurrentChange(val){
-    this.$emit("pagination", { page: val, limit: this.pageSize });
-  }
-}
+})
 </script>
+
+<template>
+  <el-pagination
+    @size-change="handleSizeChange"
+    @current-change="handleCurrentChange"
+    :page-size="size"
+    :page-sizes="[10, 30, 50, 100]"
+    layout="total, sizes, prev, pager, next, jumper"
+    :total="total"
+  />
+</template>

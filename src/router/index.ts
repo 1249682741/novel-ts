@@ -1,80 +1,77 @@
-import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
-import Layout from '@/views/Layout/index.vue'
+import {createRouter, createWebHashHistory} from 'vue-router'
+import Layout from '/@/layout/index.vue'
 
-Vue.use(VueRouter)
-
-const routes: Array<RouteConfig> = [
+export const routes = [
   {
-    path: '/login',
-    name: 'Login',
-    component:  () => import(/* webpackChunkName: "login" */ '@/views/Login/index.vue'),
+    path: '/',
+    redirect: '/login',
+    meta: {hidden: true,},
   },
   {
-    path: '/book',
-    name: 'Book',
-    redirect: '/book/list',
+    path: '/login',
+    name: 'login',
+    meta: {hidden: true, title: 'login'},
+    component: () => import('/@/views/login/index.vue'),
+  },
+  {
+    path: '/hello',
+    name: 'hello',
     component: Layout,
+    redirect: '/hello/world',
     children: [
       {
-        path: 'list',
-        name: 'book_list',
-        component: () => import( /* webpackChunkName: "book" */ '@/views/Book/List.vue'),
+        path: 'world',
+        name: 'world',
+        meta: {icon: 'el-icon-menu', title: 'world'},
+        component: () => import('/@/views/hello/index.vue'),
       }
     ]
   },
   {
-    path: '/canvas',
-    name: 'Canvas',
-    component: () => import( /* webpackChunkName: "canvas" */ '@/views/CanvasImg/demo.vue'),
-  },
-  {
-    path: '/html2ImgOrPdf',
-    name: 'html2ImgOrPdf',
-    component: () => import( /* webpackChunkName: "html2ImgOrPdf" */ '@/views/Html2ImgOrPdf/index.vue'),
-  },
-  {
-    path: '/tag',
+    path: '/sys',
+    name: 'sys',
+    meta: {icon: 'el-icon-menu', title: '系统设置'},
+    redirect: '/syx/setting',
     component: Layout,
-    redirect: '/tag/tag1',
     children: [
       {
-        path: 'tag1',
-        name: 'tag_tag1',
-        component: () => import(/* webpackChunkName: "tag" */ '@/views/Tag/tag1.vue')
+        path: 'user',
+        name: 'user',
+        meta: {icon: 'el-icon-menu', title: '用户管理'},
+        component: () => import('/@/views/sys/user/index.vue'),
       },
       {
-        path: 'tag2',
-        name: 'tag_tag2',
-        component: () => import(/* webpackChunkName: "tag" */ '@/views/Tag/tag2.vue')
+        path: 'role',
+        name: 'role',
+        meta: {icon: 'el-icon-menu', title: '角色管理'},
+        component: () => import('/@/views/hello/index.vue'),
       },
       {
-        path: 'tag3',
-        name: 'tag_tag3',
-        component: () => import(/* webpackChunkName: "tag" */ '@/views/Tag/tag3.vue')
+        path: 'menu',
+        name: 'menu',
+        meta: {icon: 'el-icon-menu', title: '菜单管理'},
+        component: () => import('/@/views/sys/menu/index.vue'),
       },
     ]
   },
   {
-    path: '/tabletest',
-    name: 'tabletest',
-    component: () => import('@/views/TableTest/index.vue')
-  },
-  {
-    path: '/collegemap',
-    name: 'collegemap',
-    component: () => import(/* webpackChunkName: "collegemap" */ '@/views/CollegeMap/index.vue')
-  },
-  {
-    path: '/fragmentUpload',
-    name: 'fragmentUpload',
-    component: () => import(/* webpackChunkName: "fragmentUpload" */ '@/views/fragmentUpload/index.vue')
+    path: '/tools',
+    name: 'tools',
+    redirect: '/tools/upload',
+    component: Layout,
+    children: [
+      {
+        path: 'upload',
+        name: 'upload',
+        meta: {icon: 'el-icon-upload', title: '分片上传'},
+        component: () => import('/@/views/tools/upload.vue')
+      }
+    ]
   }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
+const router  = createRouter({
+  history: createWebHashHistory(),
   routes
 })
 
