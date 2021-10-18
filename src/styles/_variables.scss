@@ -1,0 +1,22 @@
+// variables
+
+// base color
+
+
+// Sidebar
+$sideBarWidth: 210px;
+$subMenuBg:#1f2d3d;
+$subMenuHover:#001528;
+$subMenuActiveText:#f4f4f5;
+$menuBg:#304156;
+$menuText:#bfcbd9;
+$menuActiveText:#409EFF; // Also see settings.sidebarTextTheme
+
+
+// The :export directive is the magic sauce for webpack
+// https://mattferderer.com/use-sass-variables-in-typescript-and-javascript
+:export {
+  menuBg: $menuBg;
+  menuText: $menuText;
+  menuActiveText: $menuActiveText;
+}
