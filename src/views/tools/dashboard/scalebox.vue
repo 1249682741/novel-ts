@@ -1,6 +1,6 @@
 <script lang='ts'>
-import {defineComponent, reactive, toRefs, ref, onMounted} from 'vue'
-import Screen from './content.vue'
+import {defineComponent, reactive, toRefs, ref, onMounted, onUnmounted} from 'vue'
+import Screen from './screen.vue'
 export default defineComponent({
   components: {Screen},
   props: {
@@ -23,7 +23,8 @@ export default defineComponent({
     }
 
     function setScale(){
-      scaleBoxRef.value.style.setProperty("--scale", getScale());
+      let newScale = getScale()
+      scaleBoxRef.value.style.setProperty("transform", `scale(${newScale}) translate(-50%, 0)`);
     }
 
     onMounted(() => {
@@ -31,31 +32,33 @@ export default defineComponent({
       window.addEventListener('resize', setScale)
     })
 
+    onUnmounted(() => {
+      window.removeEventListener('resize', setScale)
+    })
+
     return {
       scaleBoxRef,
-
     }
   }
 })
 </script>
 
 <template>
-  <div class="wrap">
-    <div class="scale-box" ref="scaleBoxRef" :style="{width, hegiht}">
-
+  <div class="scale-wrap">
+    <div class="scale-box" ref="scaleBoxRef" :style="{width, height}">
+      <Screen />
     </div>
   </div>
 </template>
 
 <style scoped lang='scss'>
-  .wrap{
+  .scale-wrap{
     background: #03133f; // 背景颜色
     width: 100%;
     height: 5000px;
   }
   .scale-box{
-     /* transform: scale(var(--scale)) translate(-50%, -50%); */
-  transform: scale(var(--scale)) translate(-50%, 0);
+  /* transform: scale(var(--scale)) translate(-50%, -50%); */
   display: flex;
   height: 100%;
   flex-direction: column;

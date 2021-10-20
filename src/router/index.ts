@@ -67,13 +67,14 @@ export const routes = [
         meta: {icon: 'el-icon-upload', title: '分片上传'},
         component: () => import('/@/views/tools/upload/index.vue')
       },
-      {
-        path: 'dashboard',
-        name: 'dashboard',
-        meta: {icon: 'el-icon-menu', title: '数据面板'},
-        component: () => import('/@/views/tools/dashboard/index.vue')
-      }
+     
     ]
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    meta: {icon: 'el-icon-odometer', title: '数据面板'},
+    component: () => import('/@/views/tools/dashboard/index.vue')
   },
   {
     path: '/book',
@@ -84,7 +85,7 @@ export const routes = [
       {
         path: 'index',
         name: 'book_index',
-        meta: {icon: 'el-icon-menu', title: '书记管理'},
+        meta: {icon: 'el-icon-menu', title: '书籍管理'},
         component: () => import('/@/views/book/index.vue')
       },
     ]
