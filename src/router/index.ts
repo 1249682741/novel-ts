@@ -58,14 +58,35 @@ export const routes = [
     path: '/tools',
     name: 'tools',
     redirect: '/tools/upload',
+    meta: {icon: 'el-icon-menu', title: '工具管理'},
     component: Layout,
     children: [
       {
         path: 'upload',
         name: 'upload',
         meta: {icon: 'el-icon-upload', title: '分片上传'},
-        component: () => import('/@/views/tools/upload.vue')
+        component: () => import('/@/views/tools/upload/index.vue')
+      },
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        meta: {icon: 'el-icon-menu', title: '数据面板'},
+        component: () => import('/@/views/tools/dashboard/index.vue')
       }
+    ]
+  },
+  {
+    path: '/book',
+    name: 'book',
+    redirect: '/book/index',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'book_index',
+        meta: {icon: 'el-icon-menu', title: '书记管理'},
+        component: () => import('/@/views/book/index.vue')
+      },
     ]
   }
 ]
