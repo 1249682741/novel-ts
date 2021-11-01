@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-  import {reactive, toRefs, ref, onMounted, computed, h, resolveComponent} from 'vue'
+  import {reactive, toRefs, ref, onMounted, computed, h} from 'vue'
   import FormComponent from '/@/components/Form/index.vue'
   import TableComponent from '/@/components/Table/index.vue'
   import {useTable} from './useTable'
