@@ -5,7 +5,7 @@
   import {useTable} from './useTable'
   import {useDialog} from './useDialog'
   import {typeOpts} from './constant'
-  import {getObjFromArr} from '/@/utils'
+  import {getObjFromArr} from '/@/utils/index.js'
 
   const {tableLoading, tableData, getListData} = useTable()
   const {
