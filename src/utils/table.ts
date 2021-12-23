@@ -3,18 +3,9 @@ import {h, resolveComponent } from 'vue'
 /**
  * 创建自定义el-table-column内容
  * @param attrOrProp el-talbe-column上的各种属性
- * @param defaultRender default插槽中的内容
+ * @param render default插槽中的内容
  */
-export const crateTableColRender = (attrOrProp: Object) => h(resolveComponent('el-table-column'), attrOrProp, null)
-
-
-/**
- * 创建自定义el-table-column内容
- * @param attrOrProp el-talbe-column上的各种属性
- * @param defaultRender default插槽中的内容
- */
-export const crateTableDefaultRender = (attrOrProp: Object, defaultRender: Function) => h(resolveComponent('el-table-column'), attrOrProp, { default: defaultRender })
-
+export const createTableColRender = (attrOrProp: Object = {}, render: Object | null = null) => h(resolveComponent('el-table-column'), attrOrProp, render)
 
 interface createBtnRenderSettingParam {
   tooltipContent: string

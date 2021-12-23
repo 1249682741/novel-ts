@@ -16,16 +16,8 @@ export const routes = [
   {
     path: '/hello',
     name: 'hello',
-    component: Layout,
-    redirect: '/hello/world',
-    children: [
-      {
-        path: 'world',
-        name: 'world',
-        meta: {icon: 'el-icon-menu', title: 'world'},
-        component: () => import('/@/views/hello/index.vue'),
-      }
-    ]
+    meta: {icon: 'el-icon-menu', title: 'world'},
+    component: () => import('/@/views/hello/index.vue'),
   },
   {
     path: '/sys',

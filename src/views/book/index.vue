@@ -4,7 +4,7 @@
   import TableComponent from '/@/components/Table/index.vue'
   import {useTable} from './useTable'
   import {useDialog} from './useDialog'
-  import {crateTableDefaultRender, createBtnRender} from '/@/utils/table'
+  import {createTableColRender, createBtnRender} from '/@/utils/table'
 
   const {tableLoading, tableData, getListData, page, size, total} = useTable()
   const {
@@ -45,18 +45,11 @@
       const delBtn = createBtnRender({tooltipContent: '删除', icon: 'el-icon-delete', isRender: true, onClick: () => remListDataOneFn(scope.row, getListData)})
       return [editBtn, delBtn]
     }
-    return crateTableDefaultRender({label: "操作", align: "center", width: "70"}, defaultRender)
-  }
-
-  const authRender = () => {
-    const defaultRender = (scope: any) => {
-
-    }
-    return crateTableDefaultRender({}, defaultRender)
+    return createTableColRender({label: "操作", align: "center", width: "70"}, {default: defaultRender})
   }
 
   const tableConfig = ref([
-    {attrOrProp: {label: '用户名', prop: 'username'}},
+    {label: '用户名', prop: 'username'},
     {render: tableBtnRender},
   ])
 

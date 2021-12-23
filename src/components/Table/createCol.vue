@@ -1,9 +1,8 @@
 <script lang='ts'>
 import {defineComponent} from 'vue'
-import {crateTableDefaultRender, crateTableColRender} from '/@/utils/table'
+import {createTableColRender} from '/@/utils/table'
 
 interface ITableConfig {
-  attrOrProp: object,
   render?: Function
 }
 
@@ -16,8 +15,8 @@ export default defineComponent({
   },
   render(){
     return (this.tableConfig as ITableConfig[]).map((item) => {
-      const {attrOrProp, render} = item      
-      return render ? render() : crateTableColRender(attrOrProp)
+      const {render} = item      
+      return render ? render() : createTableColRender(item)
     })
   },
 })

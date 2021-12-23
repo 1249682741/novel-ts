@@ -1,11 +1,12 @@
 <script lang='ts' setup>
-  import {reactive, toRefs, ref, onMounted, computed} from 'vue'
+  import {reactive, toRefs, ref, onMounted, computed, h} from 'vue'
   import FormComponent from '/@/components/Form/index.vue'
   import TableComponent from '/@/components/Table/index.vue'
   import {useTable} from './useTable'
   import {useDialog} from './useDialog'
-  import {typeOpts} from './constant'
-  import {getObjFromArr} from '/@/utils/index.js'
+  import {typeOpts, isShowOpts} from './constant'
+  import {getObjFromArr} from '/@/utils/index'
+import { createTableColRender, createBtnRender } from '/@/utils/table'
 
   const {tableLoading, tableData, getListData} = useTable()
   const {
@@ -13,7 +14,7 @@
     loading: dialogLoading,
     visible,
     title,
-    formData: formDialogData,
+    formData,
     dialogFormRef,
     operationDataId,
     showFormDialog,
@@ -24,25 +25,61 @@
     getTableSetFn,
   } = useDialog()
   
+  // 列表的搜索条件
   const form = ref({})
   const searchFromConfig = ref([
     {label: '菜单名称', prop: 'name', type: 'text', },
+    {label: '菜单名称', prop: 'name', type: 'text', },
+    {label: '菜单名称', prop: 'name', type: 'text', },
+    {label: '菜单名称', prop: 'name', type: 'text', },
   ])
 
-  const typeObj = ref(getObjFromArr(typeOpts))
-  
+  // 定义类型转换
+  const typeObj = getObjFromArr(typeOpts)
 
+  // 类型的渲染
+  const typeRender = () => {
+    const defaultRender = (scope: any) => {
+      let type = scope.row.type
+      const spanTxt = h('span', {}, typeObj[type])
+      return [spanTxt]
+    }
+    return createTableColRender({label: '类型'}, {default: defaultRender})
+  }
+
+  // 操作按钮的渲染
+  const tableBtnRender = () => {
+    const defaultRender = (scope: any) => {
+      const editBtn = createBtnRender({tooltipContent: '编辑', icon: 'el-icon-edit', isRender: true, onClick: () => getTableSetFn(scope.row, 'edit')})
+      const delBtn = createBtnRender({tooltipContent: '删除', icon: 'el-icon-delete', isRender: true, onClick: () => remListDataOneFn(scope.row, getListData)})
+      return [editBtn, delBtn]
+    }
+    return createTableColRender({label: "操作", align: "center", width: "70"}, {default: defaultRender})
+  }
+
+  // 列表表格渲染
+  const tableConfig = ref([
+    {label: '菜单名称', prop: 'name'},
+    {render: typeRender},
+    {label: '路由权限', prop: 'router'},
+    {label: '排序', prop: 'sort'},
+    {render: tableBtnRender},
+  ])
+  
+  // 弹窗配置
   const formDialogConfig = computed(() =>[
     {label: '菜单名称', prop: 'name', type: 'text',},
     {label: '前端路由', prop: 'router', type: 'text',},
     {label: '接口权限', prop: 'permission', type: 'text',},
+    {label: '文件路径', prop: 'path', type: 'text',},
     {label: '菜单排序', prop: 'sort', type: 'text',},
     {label: '类型', prop: 'type', type: 'radio', opts: typeOpts},
+    {label: '是否显示', prop: 'isShow', type: 'radio', opts: isShowOpts},
     {label: '所属菜单', prop: 'pid', type: 'tree', treeData: tableData.value, defaultTreeProps: {label: 'name'}, handleNodeClick},
   ])
 
   function handleNodeClick({id}: {id: string}){
-    formDialogData.value.pid = id
+    formData.value.pid = id
   }
 
 </script>
@@ -59,45 +96,15 @@
       </template>
     </form-component>
   </div>
+
   <table-component 
     :data='tableData' 
     :loading='tableLoading'
     row-key='id'
     :tree-props="{ children: 'children', hasChildren: 'hasChild' }"
-    :show-pagination='false'>
-    <el-table-column show-overflow-tooltip prop="name" label="菜单名称"></el-table-column>
-      <el-table-column prop="type" label="类型" width="68">
-        <template #default='scope'>
-          <el-tag
-            :type="scope.row.type == '0' ? '' : 'warning'"
-            disable-transitions
-          >
-            {{ typeObj[scope.row.type]}}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column show-overflow-tooltip prop="router" label="路由权限"></el-table-column>
-      <el-table-column show-overflow-tooltip sortable prop="sort" label="排序"></el-table-column>
-      <el-table-column label="操作" align="center" width="70">
-        <template #default="scope">
-          <el-tooltip placement="top" effect="light" content='编辑'>
-            <el-button
-              icon="el-icon-edit"
-              type="text"
-              @click="getTableSetFn(scope.row, 'edit')"
-              size="mini"
-            ></el-button>
-          </el-tooltip>
-          <el-tooltip placement="top" effect="light" content='删除'>
-            <el-button
-              icon="el-icon-delete"
-              type="text"
-              @click="remListDataOneFn(scope.row)"
-              size="mini"
-            ></el-button>
-          </el-tooltip>
-        </template>
-      </el-table-column>
+    :show-pagination='false'
+    :table-config='tableConfig'
+  >
   </table-component>
 
   <!-- 新增编辑 --> 
@@ -110,7 +117,7 @@
     <form-component
       ref='dialogFormRef'
       v-loading='dialogLoading'
-      v-model:form='formDialogData'
+      v-model:form='formData'
       :config='formDialogConfig'
       :inline='false'
     />

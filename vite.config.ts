@@ -25,7 +25,7 @@ const config = {
     }
   },
   server: {
-    port: 8080,
+    port: 8888,
   },
   plugins: [
     vue(),

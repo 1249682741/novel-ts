@@ -161,5 +161,8 @@ export default defineComponent({
       }
     }
   }
+  span{
+    margin: 0 0 0 5px;
+  }
 }
 </style>

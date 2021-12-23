@@ -10,11 +10,7 @@ export default defineComponent({
     total: {type: Number, default: 0},
     page: {type: Number, default: 1},
     size: {type: Number, default: 10},
-    loading: {type: Boolean, default: false},
-    data: {type: Array, default: () => []},
     showPagination: {type: Boolean, default: true},
-    treeProps: {type: Object, default: {}},
-    rowKey: {type: String, default: ''},
     tableConfig: {type: Array, default: () => []},
     getListData: {type: Function, default: () => {}}
   },
@@ -32,7 +28,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <el-table :lading='loading' :data='data' border size='mini' :tree-props='treeProps' :row-key='rowKey' max-height='480'>
+  <el-table border size='mini' max-height='480' v-bind="$attrs" >
     <slot>
       <CreateCol :table-config='tableConfig'/>
     </slot>
