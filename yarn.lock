@@ -574,9 +574,9 @@ nanocolors@^0.2.2:
   integrity sha1-TQWTLnARYHhnPqTMZpmhxWzHd3c=
 
 nanoid@^3.1.25:
-  version "3.1.28"
-  resolved "https://registry.npmmirror.com/nanoid/download/nanoid-3.1.28.tgz?cache=0&sync_timestamp=1632644901558&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fnanoid%2Fdownload%2Fnanoid-3.1.28.tgz"
-  integrity sha1-PAG6wUy2xWgFaQFMxlovJkJMa9Q=
+  version "3.3.6"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.6.tgz#443380c856d6e9f9824267d960b4236ad583ea4c"
+  integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
